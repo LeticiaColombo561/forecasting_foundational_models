@@ -1,112 +1,131 @@
-# Foundational Models 
+# TimeGPT 
 
-Los modelos fundacionales son redes neuronales grandes, preentrenados, desiñados para comprender y generar varioas tipos de contenido. Estos modelos se enterenan con un conjunto de datos masivos, lo que permite capturar las complejidades y matices de los datos. Un grupo de Data Scientist del Stanford Institute for Human-Centered Artificial Intelligence (HAI) Center for Research on Foundation Models de Stanford, en la investigación On the Opportunities and Risks of Foundation Models, los definió como “cualquier modelo que se entrena con datos amplios (generalmente utilizando self-supervised a escala) que se puede adaptar (hacer fine-tuneing) a una amplia gama de tareas posteriores".  
+Históricamente, los métodos estadísticos como ARIMA, SARIMA y Multiple-Seasonal-Trend, etc. y los modelos de machine learning como  XGBoost y LightGBM han sido usados con éxito para hacer predicciones de series temporales. Sin embargo, los modelos de deep learning ofrecen ventajas en escalabilidad, flexibilidad y capacidad para capturar dependencias complejas de los datos, lo que los hace atractivos para tareas de pronóstico con grandes volúmenes de datos. 
 
-Los modelos fundacionales se basan principalmente en self-supervised learning , de tal forma de que los grandes conjuntos de datos aprenden de sus propias etiquetas a partir de los datos de entrada. En el caso de los foundational models basados en texto, se incluyen en el aprendizaje gran cantidad de datos de diversas fuentes, en el caso de ser multimodales no solo aprenden del texto sino también de imágenes, audios y otros tipos de datos. 
+A pesar de ello, algunos profesionales cuestionan su superioridad, presentando evidencia de que modelos más simples pueden superar a los sofisticados en términos de precisión y eficiencia. Las barreras incluyen la falta de conjuntos de datos de prueba adecuados y configuraciones de evaluación estandarizadas para series temporales.   
 
-Con estos modelos se puede hacer fine-tuning con nuestra data de manera de mejorar el ajuste. El conocimiento general y las características aprendidas durante el pre-entrenamiento se adaptan a tareas específicas que, en este caso son nuestros datos, que en general están etiquetados. 
+TimeGPT surge como un modelo innovador que, con menor complejidad, supera a las alternativas existentes, resaltando la importancia de investigar más los modelos fundacionales que puedan mejorar el pronóstico de series temporales.  
 
-El concepto de Foundational Models está basado en deep learning, es un subcampo de este, que aprovecha las redes neuronales. La adaptabilidad que tienen las redes permiten que los modelos fundacionales sean los suficientemente verátiles como para manejar entradas multimodales, la cual es una característica clave. 
+En este contexto, TimeGPT se presenta como una innovación significativa. Es el primer modelo de base que logra superar de manera consistente a las alternativas con una complejidad mínima. TimeGPT se posiciona como el comienzo de un nuevo capítulo en el análisis de series temporales al demostrar que, con conjuntos de datos más grandes y diversos, los modelos de deep learning  pueden ofrecer mejoras tangibles. Este avance sugiere que una mayor investigación en modelos fundacionales y conjuntos de datos adecuados podría potenciar el campo de las prediciones de series temporales, mejorando tanto la precisión como la eficiencia en futuras aplicaciones. 
 
-En definitiva, los Foundational Models representan un tipo particular de modelo de Inteligencia Artificial, son modelos multimodales que combinan el entrenamiento previo mediante self-supervision, la arquitectura del deep-learning y la capacidad de poder hacer fine-tunning. 
+Azul Garza and Max Mergenthaler-Canseco de Nixtla, mostraron la arquitectura, entrenamiento y evaluación del modelo Time-GPT en el paper "TimeGPT-1". Allí comparan la performance de los distintos modelos, destacando que es user-friendly, low-code y se puede realizar predicciones desde cero, con series que no han sido vistas antes. 
 
-Algunas características de los modelos fundacionales son el Transfer Learning y la arquitectura de Transformers. 
+Como todos estos foundational models, los datos se leen como sentencias, “tokens” y predicen que viene luego. Estas predicciones están basadas en patrones que el modelo identifica en la data del pasado y lo extrapola al presente. 
 
-La idea detrás del Transfer Learning es aprovechar el conocimiento adquirido durante el entrenamiento inicial para mejorar el rendimiento de la nueva tarea. El hecho de que sean entrenados en un corpus muy diverso hace que se adapten más fácilmente a varias tareas y dominios. El fine-tuning entonces, permite que los modelos básicos se destaquen en una amplia gama de tareas. 
-
-En cuanto a la arquitectura, los modelos básicos en general se basan en transformers, estos son un tipo de arquitectura de redes neuronales. Se basan en mecanismos de autoatención que permiten capturar dependencias y relaciones de largo alcance dentro de los datos, como por ejemplo las secuencias. Esta arquitectura fue la que sentó las bases de los Large Lenguaje Models. Otra particularidad es que no solo se aplican a lenguaje sino también a imágenes, gracias a la introducción de una variedad llamada Vision Transformer. 
-
-##Arquitectura 
-
-Veamos un poco más a fondo cómo funcionan los Transformers en general tienen un encoder y un decoder. En ambos podemos observar la presncia de un mecanismo de self-attention, una Fedd Forwar Network y capas de normalización. Veamos a continuación, que son cada una de ellas. 
-
-  <IMG  src="https://fullstackdeeplearning.com/course/2022/lecture-7-foundation-models/media/image-3.png"  alt="alt_text"/>
+Comparando con modelos estadísticos, machine leararning y deep learning models, TimeGPt tiene mejor performances, eficiencia y simplicidad en inferencia Zero-Shoot según lo que se muestra en el paper. 
 
 
+## La arquitectura del modelo 
+![image.png](/.attachments/image-70144252-620e-499b-ac9c-4b70881e56fc.png)
+ 
+### Entradas 
 
-### Self-attentnion 
+1. Target Variable (Variable objetivo): 
 
-Mecanismo que ayuda al modelo a determinar qué partes de una secuencia deben recibir más atención cuando se está procesando cada token. A diferencia de los modelos tradicionales que procesan secuencias en orden (por ejemplo, redes recurrentes), los transformers procesan todos los tokens de la secuencia en paralelo. Para hacer esto, necesitan un mecanismo para determinar qué partes de la secuencia son más relevantes para el token actual, y ahí es donde entra el self-attention. 
+   La serie temporal principal que se quiere predecir. Esto es el conjunto de datos históricos sobre el cual se entrena el modelo para realizar predicciones futuras. 
 
-En un paso de self-attention, para cada token en la secuencia, el modelo realiza los siguientes pasos: 
+2. Events (Eventos): 
 
-1. Cálculo de tres vectores: Para cada token, el modelo aprende tres vectores: 
+   Representan posibles factores externos o eventos importantes (como festivos, promociones, o cambios abruptos) que pueden influir en la variable objetivo. 
 
-     - Query (Q): Representa la pregunta que se le hace a otros tokens (¿Qué información necesito?) 
+3. Additional Variables (Variables adicionales): 
 
-     - Key (K): Representa la respuesta que cada token puede proporcionar (¿Qué información tengo?) 
+   Variables exógenas que se usan como entradas adicionales para el modelo. Estas podrían incluir otras series temporales relevantes o variables contextuales (precio, clima, etc.) que afecten el comportamiento de la variable objetivo. 
 
-     - Value (V): Es la información del token que será usada para el cálculo final. 
+### Procesamiento 
 
-2) Cálculo de la atención: Para cada token, el transformer compara su Query con el Key de todos los demás tokens en la secuencia (incluido él mismo). Esto se hace calculando el producto escalar entre el Query del token y los Keys de los demás tokens, lo que produce una puntuación de atención para cada par de tokens. Esto indica qué tan "atentos" deben estar esos tokens entre sí. 
+1. Bloque de Encoding: 
 
-3) Aplicación de softmax: Las puntuaciones de atención se normalizan usando una función softmax para que todas sumen 1. Esto convierte las puntuaciones en probabilidades. 
+   a. Input Embedding: transforma los datos de entrada en una representación más adecuada para que el modelo pueda procesarlos. 
 
-4) Ponderación de los valores: Luego, cada valor (Value) de los tokens se pondera de acuerdo con estas puntuaciones de atención. De este modo, los tokens más relevantes (aquellos con mayores puntuaciones) tendrán más influencia en la representación final del token que se está procesando. 
+   b. Positional Encoding: en el primer bloque, la codificación posicional se aplica a las entradas de la serie temporal (a los embeddings de la variable objetivo y las variables adicionales). 
+  
+   c. Las entradas originales, como la serie temporal objetivo y las variables exógenas, se combinan con el positional encoding para que el modelo entienda la secuencia temporal. 
 
-3) Suma ponderada: Finalmente, se toma la suma ponderada de todos los valores de los tokens, y este resultado se convierte en la nueva representación del token actual. 
+   d. Este bloque usa una Feed Forward Network para procesar los patrones locales de las series temporales. Aquí es donde se detectan ciclos, tendencias estacionales, y otros patrones en las secuencias de datos. Se extraer características más abstractas y no lineales que faciliten el pronóstico. 
+
+2. Bloque de Decoding:  
+
+   a. Positional Encoding del Output Embedding: este segundo Positional Encoding se aplica a los embeddings de salida, es decir, al espacio vectorial que representa las secuencias de salida. Este proceso permite que el modelo entienda dónde se encuentra cada valor previsto dentro de la secuencia de tiempo que se está prediciendo.  
+
+   b. Masked Multi-Head Attention: El término Masked hace referencia a que no puede mirar hacia adelante en el tiempo. En este caso en particullar, cuando estamos en un momento en el tiempo t, no permite que se utilice información futura. 
+
+   d. El término Multi-Head Attention permite que el modelo se "enfoque" en diferentes partes de la secuencia de entrada para cada predicción, capturando tanto relaciones a corto plazo como a largo plazo. Pero al ser "enmascarada", el modelo está limitado a mirar solo en el pasado y no en el futuro, garantizando que no se use información futura en las predicciones. 
+
+   e. El Multi-Head Attention que combina información del encoder junto con la FFN  ayuda al modelo a aprender patrones de las entradas (como eventos, variables adicionales y la serie objetivo) mientras mantiene información sobre el orden de los datos. 
+
+   f. Por último, las capas Linear y Softmax, transforman las representaciones en puntuaciones con sus probabilidades para luego ser seleccionadas. 
 
  
-El mecanismo de multi-head self-attention se utiliza en varias capas. Esto significa que el modelo aprende múltiples representaciones de atención (o "cabezas") para cada token. Esto ayuda al modelo a enfocarse en diferentes partes del contexto simultáneamente, permitiéndole aprender patrones más complejos en la secuencia de entrada. 
 
- ### El positional encoding 
+### Salidas 
 
-Es un componente fundamental en los transformers que complementa el mecanismo de self-attention. Su propósito es introducir información sobre la posición de los tokens en una secuencia, ya que el transformer, a diferencia de modelos secuenciales como las redes recurrentes (RNNs), no tiene una noción inherente de orden. 
+Forecast: El modelo finalmente genera predicciones o pronósticos sobre la serie temporal. La parte final muestra la predicción futura que el modelo realiza. 
 
-Los transformers procesan toda la secuencia en paralelo, lo que significa que no asumen un orden natural entre los tokens. Sin embargo, en tareas como el procesamiento del lenguaje natural (NLP), el orden de las palabras es crucial para entender el significado de la oración. 
+ 
 
-El positional encoding agrega una representación de las posiciones de los tokens a los embeddings de las palabras, de manera que cada palabra no solo está representada por su valor semántico, sino también por su posición en la secuencia. 
+## Entrenamiento de TimeGPT 
 
-El método más común para calcular estos vectores de posición es usando funciones trigonométricas, específicamente senos y cosenos de frecuencias diferentes. El razonamiento detrás del uso de funciones sinusoidales es que proporcionan una forma continua y periódica de representar las posiciones, lo que permite al modelo aprender de secuencias de longitud variable y generalizar mejor a secuencias de diferentes tamaños. 
+TimeGPT fue entrenado utilizando la colección más grande de series temporales disponibles públicamente, abarcando más de 100 mil millones de puntos de datos provenientes de diversos dominios como finanzas, salud, clima, energía, entre otros. Es un conjunto de datos es extremadamente diverso en términos de patrones temporales, estacionalidades, tendencias y niveles de ruido, lo que permite al modelo aprender de una amplia gama de escenarios. Gracias a esta diversidad, TimeGPT puede generalizar y hacer pronósticos precisos sobre series temporales no vistas, según lo que se comentan en el paper, eliminando la necesidad de entrenar modelos individuales para cada situación. 
 
-### Normalization Layer 
+El proceso de entrenamiento de TimeGPT se realizó en un cluster de GPUs NVIDIA A10G, con una exploración exhaustiva de hiperparámetros, como la tasa de aprendizaje y el tamaño de lote. Se descubrió que un tamaño de lote mayor y una tasa de aprendizaje más baja ofrecían los mejores resultados. El modelo fue implementado en PyTorch y entrenado con el optimizador Adam, aplicando una estrategia de reducción de la tasa de aprendizaje al 12% de su valor inicial, lo que permitió un ajuste más fino durante el proceso de aprendizaje. 
 
-La Layer Normalization es una técnica de normalización que se aplica a las activaciones de una capa en la red neuronal. Su objetivo es estabilizar las salidas de la capa, mejorando la convergencia y facilitando el entrenamiento. En particular, la normalización en transformers ayuda a que el entrenamiento sea más eficiente y reduce el riesgo de problemas como la saturación de las activaciones o los gradientes. 
+Además de realizar predicciones puntuales, TimeGPT también incorpora predicción probabilística para estimar la incertidumbre en sus pronósticos, lo que es crucial para la toma de decisiones informada y la evaluación de riesgos. Utiliza un enfoque de predicción que genera intervalos de predicción con un nivel preestablecido de precisión de cobertura. A diferencia de los métodos tradicionales, este enfoque no requiere suposiciones estrictas sobre la distribución de los datos, lo que lo hace flexible y aplicable a distintos dominios. 
 
-Los transformers son arquitecturas profundas que dependen de bloques repetidos de elf-attention y redes feed-forward. Esto puede hacer que las activaciones en las capas posteriores se vuelvan muy grandes o muy pequeñas, lo que podría causar problemas en el entrenamiento. La Layer Normalization mitiga esto normalizando las activaciones. 
+Durante la inferencia de nuevas series temporales, TimeGPT realiza pronósticos continuos basados en los datos más recientes, ajustando los errores del modelo de manera dinámica. Esto mejora la precisión de las predicciones al permitir que el modelo se adapte constantemente a las últimas tendencias y cambios en los datos, lo que lo convierte en una herramienta eficaz para el pronóstico de series temporales en un amplio espectro de aplicaciones. 
 
-En la arquitectura de transformers, las capas de normalización se colocan generalmente de dos maneras: 
+## Resultados 
 
-Antes del mecanismo de self-attention: Se normalizan las entradas antes de aplicar la autoatención, lo que asegura que las entradas a la capa de atención estén bien equilibradas y estabilizadas. 
+Tradicionalmente los modelos se evalúan dividiendo las series temporales en conjuntos de entrenamiento y prueba, pero este enfoque no es suficiente para un modelo fundacional como TimeGPT, cuya fortaleza es predecir series completamente nuevas. TimeGPT fue probado en más de 300 mil series temporales de diversos dominios, como finanzas, tráfico web, clima, IoT, y electricidad, sin haber visto estos datos durante su entrenamiento. 
 
-Después del bloque feed-forward: También se usa la normalización después del paso feed-forward para estabilizar la salida y antes de agregar la conexión residual (skip connection). 
+La evaluación se realizó en la última ventana de pronóstico de cada serie, ajustando el horizonte de predicción según la frecuencia de los datos (por ejemplo, 12 meses para datos mensuales o 24 horas para datos horarios). El modelo no fue reentrenado (zero-shot) y utilizó solo datos históricos anteriores como entrada. El rendimiento de TimeGPT se comparó con varios modelos de referencia y estadísticos, excluyendo algunos como Prophet y ARIMA debido a sus altos requisitos computacionales. Las métricas de evaluación seleccionadas fueron rMAE y rRMSE, que se normalizaron en relación con el modelo Seasonal Naive, lo que facilitó la comparación entre diferentes frecuencias de datos. 
 
-### Encoder y Decoder 
+En la prueba de inferencia de Zero-shot, TimeGPT mostró resultados impresionantes, superando a muchos modelos estadísticos y de aprendizaje profundo, y posicionándose entre los tres mejores en todas las frecuencias de datos evaluadas. Esto demuestra su capacidad para ofrecer pronósticos precisos sin necesidad de ajustes adicionales. Además, se destacan factores como el costo computacional y la simplicidad en la implementación, en estos aspectos TimeGPT también mostró un rendimiento eficiente. 
 
-El **encoder** es responsable de procesar la secuencia de entrada y generar una representación codificada que captura la información y relaciones contextuales entre los tokens (o palabras) de la entrada. El encoder es particularmente útil para tareas donde se necesita un entendimiento profundo del contenido. 
+ ![image.png](/.attachments/image-c9b53b21-9419-4fb5-b59d-5eb51d47a8bb.png)
 
-El flujo del encoder se puede ver de la siguiente forma: 
 
-1. Cada token de la secuencia de entrada se embebe en un vector. 
-2. A estos embeddings se les suman los positional encodings (codificaciones posicionales). 
-3. Se aplican múltiples capas de atención propia y redes feed-forward para obtener una representación rica del texto de entrada. 
-4. El decoder es responsable de generar la secuencia de salida basándose tanto en la representación codificada generada por el encoder como en las palabras generadas anteriormente.  
+## Funcionalidades de TimeGPT
 
-La particularidad del **decoder** es que además de tener un mecanismo Self-Attention, que tiene la particularidad de que solo puede prestar atención a tokens previos pero no a los futuros, gracias al positonal encoder, para asegurarse de que no “hace trampa” mirando las palabras futuras, también tiene un self attention sobre la salida de Ecoder. 
+- Anomaly Detection: El modelo tiene la capacidad de detectar anomalías en los datos, identifica puntos de datos fuera del comportamiento normal, ayudando a detectar actividades fraudulentas, violaciones de seguridad o valores atípicos significativos. La detección de anomalías implica hacer predicciones y generar un intervalo de confianza del 99%. Si un punto observado cae fuera de ese intervalo, es una anomalía.
 
-Esta segunda capa de atención, permite que el decoder "preste atención" a la representación codificada de la secuencia de entrada. Aquí, el decoder toma la secuencia codificada del encoder y selecciona las partes relevantes para generar la palabra o token actual en la salida. 
+- Long Horizon Forecasting: TimeGPT permite realizar predicciones a largo plazo, utilizando el modelo "timegpt-1-long-horizon". El pronóstico de largo horizonte se refiere a predicciones en el futuro, que generalmente superan los dos períodos estacionales. Por ejemplo, para los datos diarios, un pronóstico que abarca más de dos semanas cae en la categoría de horizonte largo.
 
-1. El flujo del decoder se puede ver de la siguiente forma: 
-2. Masked Multi-Head Attention: Procesa los tokens generados hasta el momento, permitiendo que cada token "preste atención" a tokens previos. 
-3. Multi-Head Attention con conexión al encoder: Permite que el decoder use la representación de la secuencia de entrada generada por el encoder. 
-4. Feed-Forward Network: Refina las representaciones de los tokens. 
+- Azure Integration: TimeGPT ofrece una solución que está integrada con Azure accediendo a través de AzureAI. Se puede implementar como un servicio con pago por uso a través de Azure AI, proporcionando una forma de consumir el modelo como una API sin alojarlos en su suscripción, al tiempo que mantiene la seguridad empresarial.
 
-Por ultimo se agregan dos capas:
+- Agregado de Variables Exógenas: TimeGPT permite la incorporación de variables exógenas, como días festivos, variables categóricas y otros factores externos, para enriquecer el modelo y mejorar la precisión de las predicciones. También incluye el uso de valores SHAP (SHapley Additive exPlanations) para analizar la importancia de estas variables en el modelo. 
 
-1. Capa Linear: Transforma las representaciones en puntuaciones para cada palabra del vocabulario. 
-2. Softmax: Convierte esas puntuaciones en probabilidades, de las cuales se selecciona la palabra/token más probable. 
+- Validación mediante Cross-Validation: Para asegurar la robustez de las predicciones, TimeGPT admite la validación cruzada (cross-validation), lo que permite evaluar el rendimiento del modelo en diferentes subconjuntos de datos y asegurar que las predicciones sean consistentes.
+
+- Intervalos de confianza: TimeGPT incluye la posibilidad de estimar los resultados con intervalos de confianza. Estos permiten capturar la incertidumbre en las predicciones, proporcionando un rango probable para los valores futuros en lugar de solo una estimación puntual, lo que hace que las predicciones sean más robustas.
+
+- Métricas para Evaluar Resultados: TimeGPT incluye diversas métricas para evaluar los resultados de las predicciones, lo que facilita la comprensión de su rendimiento y la identificación de áreas de mejora.
+
+- Finetuning con Funciones de Pérdida Específicas: TimeGPT ofrece la opción de realizar fine-tuning para adaptar el modelo a un nuevo conjunto de datos. Este proceso incluye varios parámetros configurables:
+
+   - finetune_steps: Define el número de pasos para el fine-tuning, permitiendo personalizar la extensión del entrenamiento en nuevos datos.
+   - finetune_loss: Permite elegir la función de pérdida a utilizar durante el el fine-tuning, con opciones que incluyen errores absolutos (MAE), errores cuadráticos (MSE), y errores porcentuales (MAPE), entre otros.
+
+
+## Conclusiones
+
+TimeGPT ha demostrado ser una herramienta altamente eficaz y versátil para el pronóstico de series temporales, no solo por su capacidad para ofrecer predicciones precisas en una amplia gama de dominios y frecuencias, sino también por su eficiencia computacional y facilidad de implementación. Además cuenta con la posibilidad de las zero-shot, que permite realizar pronósticos sin necesidad de re-entrenar el modelo para nuevas series temporales. A su vez se puede hacer fácilmente fine-tuning y se puede implementar cross-validation para tener mayor robustez en los resultados. Por último se puede destacar la integración que tiene con Azure proporcionando mayor seguridad. 
+ 
+
+
 
  
 
 ## Recursos 
 
-https://aws.amazon.com/what-is/foundation-models/ 
+- https://arxiv.org/pdf/2310.03589 
 
-https://arxiv.org/pdf/2108.07258 
+- https://www.analyticsvidhya.com/blog/2024/02/timegpt-revolutionizing-time-series-forecasting/ 
 
-https://toloka.ai/blog/the-power-of-foundation-models/ 
+- https://nixtlaverse.nixtla.io/nixtla/docs/use-cases/intermittent_demand.html#forecasting-with-exogenous-variables-using-timegpt 
 
-https://fullstackdeeplearning.com/course/2022/lecture-7-foundation-models/ 
+- https://nixtlaverse.nixtla.io/statsforecast/docs/tutorials/crossvalidation.html 
 
- 
+- https://www.nixtla.io/news/timegen1-on-azure
+
 
